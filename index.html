@@ -1,40 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>QuickBite Food Ordering System</title>
+  <title>QuickBite - Food Delivery</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     *{margin:0; padding:0; box-sizing:border-box}
     body{font-family: 'Segoe UI', Arial; background:#f5f5f5}
-   .page{padding:20px; max-width:1200px; margin:0 auto}
-    #loginPage{text-align:center; background:white; padding:40px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.1); max-width:400px; margin:50px auto}
-    #loginPage h2{color:#ff5722; margin-bottom:10px}
-    input, select{padding:12px; margin:10px; width:85%; border:2px solid #ddd; border-radius:8px; font-size:15px}
-   .btn{background:#ff5722; color:white; padding:14px; border:none; border-radius:8px; cursor:pointer; font-size:16px; margin:8px; width:85%; font-weight:600}
-   .btn:hover{background:#e64a19}
-   .link-btn{background:none; color:#2196f3; border:none; text-decoration:underline; cursor:pointer}
+    .page{padding:20px; max-width:1200px; margin:0 auto}
+    .header{background:#ff5722; color:white; padding:20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px}
+    .header div{display:flex; gap:10px}
+    .card{background:white; padding:20px; border-radius:12px; margin-bottom:20px; box-shadow:0 3px 10px rgba(0,0,0,0.1)}
+    .btn{background:#ff5722; color:white; padding:12px 20px; border:none; border-radius:8px; cursor:pointer; margin:5px; font-weight:600}
+    .btn:hover{background:#e64a19}
+    .btn-danger{background:#f44336}
+    .btn-danger:hover{background:#d32f2f}
+    .btn-admin{background:#2196f3} /* Navin Admin button */
+    .btn-admin:hover{background:#1976d2}
+    .btn-success{background:#4caf50}
+    .restaurant-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px}
+    .restaurant-card{background:white; padding:15px; border-radius:12px; text-align:center; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.1)}
+    .restaurant-card img{width:100%; height:150px; object-fit:cover; border-radius:8px}
+    .food-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px}
+    .food-card{background:white; border-radius:12px; overflow:hidden; box-shadow:0 3px 10px rgba(0,0,0,0.1)}
+    .food-card img{width:100%; height:200px; object-fit:cover}
+    .food-info{padding:15px}
+    .price{color:#ff5722; font-size:20px; font-weight:bold}
   </style>
 </head>
 <body>
 
-  <div id="loginPage" class="page">
-    <h2>🍔 QuickBite Login</h2>
-    <select id="role">
-      <option value="user">User Login</option>
-      <option value="admin">Admin Login</option>
-    </select><br>
-    <input type="text" id="name" placeholder="Enter Name" style="display:none"><br>
-    <input type="email" id="email" placeholder="Enter Email"><br>
-    <input type="password" id="password" placeholder="Enter Password"><br><br>
-    <button class="btn" id="mainBtn" onclick="handleAuth()">Login</button><br>
-    <button class="link-btn" id="toggleBtn" onclick="toggleForm()">Don't have account? Sign Up</button><br><br>
-    <button class="btn" style="background:#f44336" onclick="resetData()">Reset All Data</button>
-    <p style="font-size:12px; color:gray">Reset dabavla ki sagle user delete hotil</p>
+<div class="page">
+  <!-- HEADER -->
+  <div class="header">
+    <h2>Welcome <span id="userName">Guest</span></h2>
+    <div>
+      <button class="btn btn-admin" onclick="goAdmin()" id="adminBtn" style="display:none">⚙️ Admin Panel</button>
+      <button class="btn btn-danger" onclick="logout()">Logout</button>
+    </div>
   </div>
 
+  <!-- RESTAURANT LIST -->
+  <div id="restaurantPage">
+    <h3>Select Restaurant</h3>
+    <div class="restaurant-grid" id="restaurantList"></div>
+  </div>
+
+  <!-- FOOD MENU PAGE -->
+  <div id="menuPage" style="display:none">
+    <button class="btn" onclick="backToRestaurants()">← Back</button>
+    <h3 id="menuTitle"></h3>
+    <div class="food-grid" id="foodList"></div>
+    <button class="btn btn-success" style="position:fixed; bottom:20px; right:20px" onclick="placeOrder()">Order Now 🛒 <span id="cartCount">0</span></button>
+  </div>
+
+</div>
+
 <script>
-let isLogin = true;
+let currentUser = localStorage.getItem('currentUser') || 'Guest';
+document.getElementById('userName').innerText = currentUser;
+
+// Restaurant data
+let restaurantData = [
+ {id:1, name:"Pizza Hut", img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"},
+ {id:2, name:"McDonalds", img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},
+ {id:3, name:"Nagpur Misal", img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"},
+ {id:4, name:"Burger King", img:"https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"}
+];
+
+// Menu data - admin madhe add kela tari ithe load hoil
+let menuData = JSON.parse(localStorage.getItem('menuData')) || {
+ 1: [
+    {id:11, name:"Margherita Pizza", price:250, img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400"},
+    {id:12, name:"Pepperoni Pizza", price:300, img:"https://images.unsplash.com/photo-1628840042765-3564f2e708d3?w=400"},
+    {id:13, name:"Cheese Burst Pizza", price:350, img:"https://images.unsplash.com/photo-1595854341625-f33ee3dbf786?w=400"},
+    {id:14, name:"Veggie Delight Pizza", price:280, img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"}
+  ],
+ 2: [
+    {id:21, name:"Big Mac", price:180, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},
+    {id:22, name:"French Fries", price:80, img:"https://images.unsplash.com/photo-1585109649139-366004e1f9d2?w=400"},
+    {id:23, name:"Chicken Burger", price:150, img:"https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"},
+    {id:24, name:"Coke", price:50, img:"https://images.unsplash.com/photo-1553456558-aff63285bdd1?w=400"}
+  ],
+ 3: [
+    {id:31, name:"Misal Pav", price:100, img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"},
+    {id:32, name:"Vada Pav", price:40, img:"https://images.unsplash.com/photo-1626132647523-66f4f9ad3066?w=400"},
+    {id:33, name:"Pav Bhaji", price:120, img:"https://images.unsplash.com/photo-1631515242808-497c3f9e4d0b?w=400"},
+    {id:34, name:"Thali", price:200, img:"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400"}
+  ],
+ 4: [
+    {id:41, name:"Whopper", price:190, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},
+    {id:42, name:"Chicken Whopper", price:210, img:"https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"},
+    {id:43, name:"Cheese Burger", price:130, img:"https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400"},
+    {id:44, name:"Onion Rings", price:90, img:"https://images.unsplash.com/photo-1633321702518-7feccafb94f1?w=400"}
+  ]
+};
+
+let cart = [];
+let selectedRes = 1;
+
+// Load Restaurants
+function loadRestaurants(){
+  let html = "";
+  restaurantData.forEach(r=>{
+    html += `<div class="restaurant-card" onclick="openMenu(${r.id})">
+      <img src="${r.img}">
+      <h4>${r.name}</h4>
+    </div>`;
+  });
+  document.getElementById('restaurantList').innerHTML = html;
+}
+
+// Open Menu
+function openMenu(resId){
+  selectedRes = resId;
+  document.getElementById('restaurantPage').style.display = 'none';
+  document.getElementById('menuPage').style.display = 'block';
+  document.getElementById('menuTitle').innerText = restaurantData[resId-1].name;
+  
+  let html = "";
+  menuData[resId].forEach(item=>{
+    html += `<div class="food-card">
+      <img src="${item.img}">
+      <div class="food-info">
+        <h4>${item.name}</h4>
+        <p class="price">₹${item.price}</p>
+        <button class="btn" onclick="addToCart(${item.id})">Add to Cart</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('foodList').innerHTML = html;
+}
+
+function backToRestaurants(){
+  document.getElementById('restaurantPage').style.display = 'block';
+  document.getElementById('menuPage').style.display = 'none';
+}
+
+function addToCart(id){
+  cart.push(id);
+  document.getElementById('cartCount').innerText = cart.length;
+  alert("Added to cart!");
+}
+
+function placeOrder(){
+  if(cart.length == 0){ alert("Cart empty"); return; }
+  let total = cart.length * 100; // demo
+  let orders = JSON.parse(localStorage.getItem('orders')) || [];
+  orders.push({user:currentUser, total:total, status:"Pending"});
+  localStorage.setItem('orders', JSON.stringify(orders));
+  alert("Order Placed!");
+  cart = [];
+  document.getElementById('cartCount').innerText = 0;
+}
+
+function logout(){
+  localStorage.removeItem('currentUser');
+  localStorage.removeItem('currentUserRole');
+  window.location.href = "login.html";
+}
+
+function goAdmin(){
+  window.location.href = "admin.html";
+}
+
+// Admin button fakt admin la disayla pahije
+function checkAdminButton(){
+  let role = localStorage.getItem('currentUserRole');
+  if(role === 'admin'){
+    document.getElementById('adminBtn').style.display = 'inline-block';
+  }
+}
+
+// Page load
+loadRestaurants();
+checkAdminButton();
+</script>
+
+</body>
+</html>let isLogin = true;
 
 const ADMIN_EMAIL = "admin@quickbite.com";
 const ADMIN_PASS = "admin123";
