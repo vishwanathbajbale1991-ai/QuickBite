@@ -1,40 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <title>QuickBite Login</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    *{margin:0; padding:0; box-sizing:border-box}
-    body{font-family: 'Segoe UI', Arial; background:linear-gradient(135deg, #ff5722, #ff9800); display:flex; justify-content:center; align-items:center; height:100vh}
-    .box{background:white; padding:40px; border-radius:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.3); width:90%; max-width:400px}
-    .box h1{color:#ff5722; margin-bottom:10px; font-size:32px}
-    .box p{color:#666; margin-bottom:30px}
-    .btn{padding:15px 30px; margin:10px; border:none; border-radius:12px; font-size:18px; cursor:pointer; font-weight:bold; width:100%; transition:0.3s}
-    .btn:hover{transform: translateY(-2px)}
-    .btn-user{background:#4caf50; color:white}
-    .btn-user:hover{background:#388e3c}
-    .btn-admin{background:#2196f3; color:white}
-    .btn-admin:hover{background:#1976d2}
-  </style>
+<title>QuickBite Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{background:linear-gradient(135deg,#ff5722,#ff9800); display:flex; justify-content:center; align-items:center; height:100vh; margin:0; font-family:Arial}
+.box{background:white; padding:40px; border-radius:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.3)}
+h1{color:#ff5722}
+.btn{padding:15px 30px; margin:10px; border:none; border-radius:12px; font-size:18px; cursor:pointer; width:220px; color:white; font-weight:bold}
+.btn-user{background:#4caf50} 
+.btn-admin{background:#2196f3}
+</style>
 </head>
 <body>
-  <div class="box">
-    <h1>🍔 QuickBite</h1>
-    <p>Select Panel to Continue</p>
-    <button class="btn btn-user" onclick="login('user')">👤 User Panel</button>
-    <button class="btn btn-admin" onclick="login('admin')">⚙️ Admin Panel</button>
-  </div>
-
+<div class="box">
+  <h1>🍔 QuickBite</h1>
+  <p>Select Panel</p>
+  <button class="btn btn-user" onclick="login('user')">👤 User Panel</button><br>
+  <button class="btn btn-admin" onclick="login('admin')">⚙️ Admin Panel</button>
+</div>
 <script>
 function login(role){
-  if(role === 'user'){
-    localStorage.setItem('currentUser', 'Guest User');
-    localStorage.setItem('currentUserRole', 'user');
-  } else {
-    localStorage.setItem('currentUser', 'Admin');
-    localStorage.setItem('currentUserRole', 'admin');
-  }
+  localStorage.setItem('currentUser', role === 'admin' ? 'Admin' : 'Guest User');
+  localStorage.setItem('currentUserRole', role);
+  window.location.href = "index.html";
+}
+</script>
+</body>
+</html>  }
   window.location.href = "index.html";
 }
 </script>
