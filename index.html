@@ -4,70 +4,121 @@
 <title>QuickBite</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-*{margin:0; padding:0; box-sizing:border-box; font-family:Arial}
-.login-screen{background:linear-gradient(135deg,#ff5722,#ff9800); height:100vh; display:flex; justify-content:center; align-items:center}
-.box{background:white; padding:40px; border-radius:20px; text-align:center}
-.btn{padding:15px 30px; margin:10px; border:none; border-radius:12px; font-size:18px; cursor:pointer; width:220px; color:white; font-weight:bold}
-.btn-user{background:#4caf50} .btn-admin{background:#2196f3} .btn-danger{background:#f44336}
+*{margin:0; padding:0; box-sizing:border-box}
+body{font-family: Arial; background:#f5f5f5}
 .header{background:#ff5722; color:white; padding:15px; display:flex; justify-content:space-between; align-items:center}
-.grid{display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:15px}
-.card{background:white; border-radius:10px; text-align:center; padding:10px; cursor:pointer}
-.card img{width:100%; height:120px; object-fit:cover; border-radius:8px}
+.btn{padding:10px 15px; border:none; border-radius:8px; cursor:pointer; color:white; font-weight:600; margin-left:5px}
+.btn-admin{background:#2196f3} .btn-danger{background:#f44336}
+.grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px; padding:20px}
+.card{background:white; padding:15px; border-radius:12px; text-align:center; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.card img{width:100%; height:150px; object-fit:cover; border-radius:8px}
+.food-grid{display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px}
+.food-card{background:white; border-radius:10px; padding:10px; text-align:center}
+.food-card img{width:100%; height:120px; object-fit:cover; border-radius:8px}
+.price{color:#ff5722; font-weight:bold; font-size:18px}
 .hidden{display:none}
 </style>
 </head>
 <body>
 
-<!-- PAGE 1: LOGIN -->
-<div id="loginPage" class="login-screen">
-  <div class="box">
-    <h1>🍔 QuickBite</h1>
-    <p>Select Panel</p>
-    <button class="btn btn-user" onclick="doLogin('user')">👤 User Panel</button><br>
-    <button class="btn btn-admin" onclick="doLogin('admin')">⚙️ Admin Panel</button>
-  </div>
-</div>
-
-<!-- PAGE 2: APP -->
-<div id="appPage" class="hidden">
+<div id="restaurantPage">
   <div class="header">
-    <h3>Welcome <span id="userName">Guest</span></h3>
+    <h2>Welcome <span id="userName">Guest</span></h2>
     <div>
-      <button class="btn btn-admin" id="adminBtn" style="display:none" onclick="alert('Admin Panel Yethe')">⚙️ Admin</button>
-      <button class="btn btn-danger" onclick="doLogout()">Logout</button>
+      <button class="btn btn-admin" onclick="goAdmin()" id="adminBtn" style="display:none">⚙️ Admin Panel</button>
+      <button class="btn btn-danger" onclick="logout()">Logout</button>
     </div>
   </div>
-  <h3 style="padding:15px">Select Restaurant</h3>
-  <div class="grid">
-    <div class="card" onclick="alert('Menu Open')"><img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"><h4>Pizza Hut</h4></div>
-    <div class="card" onclick="alert('Menu Open')"><img src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"><h4>Nagpur Misal</h4></div>
+  <h3 style="padding:20px">Select Restaurant</h3>
+  <div class="grid" id="restaurantList"></div>
+</div>
+
+<div id="menuPage" class="hidden">
+  <div class="header">
+    <button class="btn" onclick="backToRestaurants()">← Back</button>
+    <h3 id="menuTitle"></h3>
   </div>
+  <div class="food-grid" id="foodList"></div>
+  <button class="btn btn-admin" style="position:fixed; bottom:20px; right:20px" onclick="placeOrder()">Order Now 🛒 <span id="cartCount">0</span></button>
 </div>
 
 <script>
-window.onload = function(){
-  let role = localStorage.getItem('currentUserRole');
-  if(role){ showApp(role); }
-  else{ document.getElementById('loginPage').style.display = 'flex'; }
+let currentUser = localStorage.getItem('currentUser') || 'Guest';
+document.getElementById('userName').innerText = currentUser;
+
+let restaurantData = [
+ {id:1, name:"Pizza Hut", img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"},
+ {id:2, name:"McDonalds", img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},
+ {id:3, name:"Nagpur Misal", img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"},
+ {id:4, name:"Burger King", img:"https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"}
+];
+
+let menuData = JSON.parse(localStorage.getItem('menuData')) || {
+ 1: [{id:11, name:"Margherita Pizza", price:250, img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400"}],
+ 2: [{id:21, name:"Big Mac", price:180, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"}],
+ 3: [{id:31, name:"Misal Pav", price:100, img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"}],
+ 4: [{id:41, name:"Whopper", price:190, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"}]
+};
+
+let cart = [];
+let selectedRes = 1;
+
+function loadRestaurants(){
+  let html = "";
+  restaurantData.forEach(r=>{
+    html += `<div class="card" onclick="openMenu(${r.id})"><img src="${r.img}"><h4>${r.name}</h4></div>`;
+  });
+  document.getElementById('restaurantList').innerHTML = html;
 }
 
-function doLogin(role){
-  localStorage.setItem('currentUser', role === 'admin' ? 'Admin' : 'Guest');
-  localStorage.setItem('currentUserRole', role);
-  showApp(role);
+function openMenu(resId){
+  selectedRes = resId;
+  document.getElementById('restaurantPage').style.display = 'none';
+  document.getElementById('menuPage').style.display = 'block';
+  document.getElementById('menuTitle').innerText = restaurantData[resId-1].name;
+  let html = "";
+  menuData[resId].forEach(item=>{
+    html += `<div class="food-card"><img src="${item.img}"><h4>${item.name}</h4><p class="price">₹${item.price}</p><button class="btn btn-admin" onclick="addToCart(${item.id})">Add to Cart</button></div>`;
+  });
+  document.getElementById('foodList').innerHTML = html;
 }
 
-function showApp(role){
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('appPage').style.display = 'block';
-  document.getElementById('userName').innerText = localStorage.getItem('currentUser');
-  if(role === 'admin'){ document.getElementById('adminBtn').style.display = 'inline-block'; }
+function backToRestaurants(){
+  document.getElementById('restaurantPage').style.display = 'block';
+  document.getElementById('menuPage').style.display = 'none';
 }
 
-function doLogout(){
+function addToCart(id){
+  cart.push(id);
+  document.getElementById('cartCount').innerText = cart.length;
+  alert("Added to cart!");
+}
+
+function placeOrder(){
+  if(cart.length == 0){ alert("Cart empty"); return; }
+  alert("Order Placed!");
+  cart = [];
+  document.getElementById('cartCount').innerText = 0;
+}
+
+function logout(){
   localStorage.clear();
-  location.reload();
+  window.location.href = "login.html";
 }
+
+function goAdmin(){
+  window.location.href = "admin.html";
+}
+
+function checkAdminButton(){
+  let role = localStorage.getItem('currentUserRole');
+  if(role === 'admin'){
+    document.getElementById('adminBtn').style.display = 'inline-block';
+  }
+}
+
+loadRestaurants();
+checkAdminButton();
 </script>
 </body>
-</html>
+</html>      
