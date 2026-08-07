@@ -10,12 +10,10 @@
     .page{padding:20px; max-width:1200px; margin:0 auto}
     .header{background:#ff5722; color:white; padding:20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px}
     .header div{display:flex; gap:10px}
-    .card{background:white; padding:20px; border-radius:12px; margin-bottom:20px; box-shadow:0 3px 10px rgba(0,0,0,0.1)}
     .btn{background:#ff5722; color:white; padding:12px 20px; border:none; border-radius:8px; cursor:pointer; margin:5px; font-weight:600}
     .btn:hover{background:#e64a19}
     .btn-danger{background:#f44336}
-    .btn-danger:hover{background:#d32f2f}
-    .btn-admin{background:#2196f3} /* Navin Admin button */
+    .btn-admin{background:#2196f3}
     .btn-admin:hover{background:#1976d2}
     .btn-success{background:#4caf50}
     .restaurant-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px}
@@ -31,7 +29,7 @@
 <body>
 
 <div class="page">
-  <!-- HEADER -->
+  <!-- HEADER - ITH BADAL AAHE -->
   <div class="header">
     <h2>Welcome <span id="userName">Guest</span></h2>
     <div>
@@ -60,7 +58,6 @@
 let currentUser = localStorage.getItem('currentUser') || 'Guest';
 document.getElementById('userName').innerText = currentUser;
 
-// Restaurant data
 let restaurantData = [
  {id:1, name:"Pizza Hut", img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"},
  {id:2, name:"McDonalds", img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},
@@ -68,66 +65,32 @@ let restaurantData = [
  {id:4, name:"Burger King", img:"https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"}
 ];
 
-// Menu data - admin madhe add kela tari ithe load hoil
 let menuData = JSON.parse(localStorage.getItem('menuData')) || {
- 1: [
-    {id:11, name:"Margherita Pizza", price:250, img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400"},
-    {id:12, name:"Pepperoni Pizza", price:300, img:"https://images.unsplash.com/photo-1628840042765-3564f2e708d3?w=400"},
-    {id:13, name:"Cheese Burst Pizza", price:350, img:"https://images.unsplash.com/photo-1595854341625-f33ee3dbf786?w=400"},
-    {id:14, name:"Veggie Delight Pizza", price:280, img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"}
-  ],
- 2: [
-    {id:21, name:"Big Mac", price:180, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},
-    {id:22, name:"French Fries", price:80, img:"https://images.unsplash.com/photo-1585109649139-366004e1f9d2?w=400"},
-    {id:23, name:"Chicken Burger", price:150, img:"https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"},
-    {id:24, name:"Coke", price:50, img:"https://images.unsplash.com/photo-1553456558-aff63285bdd1?w=400"}
-  ],
- 3: [
-    {id:31, name:"Misal Pav", price:100, img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"},
-    {id:32, name:"Vada Pav", price:40, img:"https://images.unsplash.com/photo-1626132647523-66f4f9ad3066?w=400"},
-    {id:33, name:"Pav Bhaji", price:120, img:"https://images.unsplash.com/photo-1631515242808-497c3f9e4d0b?w=400"},
-    {id:34, name:"Thali", price:200, img:"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400"}
-  ],
- 4: [
-    {id:41, name:"Whopper", price:190, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},
-    {id:42, name:"Chicken Whopper", price:210, img:"https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"},
-    {id:43, name:"Cheese Burger", price:130, img:"https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400"},
-    {id:44, name:"Onion Rings", price:90, img:"https://images.unsplash.com/photo-1633321702518-7feccafb94f1?w=400"}
-  ]
+ 1: [{id:11, name:"Margherita Pizza", price:250, img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400"},{id:12, name:"Pepperoni Pizza", price:300, img:"https://images.unsplash.com/photo-1628840042765-3564f2e708d3?w=400"},{id:13, name:"Cheese Burst Pizza", price:350, img:"https://images.unsplash.com/photo-1595854341625-f33ee3dbf786?w=400"},{id:14, name:"Veggie Delight Pizza", price:280, img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"}],
+ 2: [{id:21, name:"Big Mac", price:180, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},{id:22, name:"French Fries", price:80, img:"https://images.unsplash.com/photo-1585109649139-366004e1f9d2?w=400"},{id:23, name:"Chicken Burger", price:150, img:"https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"},{id:24, name:"Coke", price:50, img:"https://images.unsplash.com/photo-1553456558-aff63285bdd1?w=400"}],
+ 3: [{id:31, name:"Misal Pav", price:100, img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"},{id:32, name:"Vada Pav", price:40, img:"https://images.unsplash.com/photo-1626132647523-66f4f9ad3066?w=400"},{id:33, name:"Pav Bhaji", price:120, img:"https://images.unsplash.com/photo-1631515242808-497c3f9e4d0b?w=400"},{id:34, name:"Thali", price:200, img:"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400"}],
+ 4: [{id:41, name:"Whopper", price:190, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},{id:42, name:"Chicken Whopper", price:210, img:"https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"},{id:43, name:"Cheese Burger", price:130, img:"https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400"},{id:44, name:"Onion Rings", price:90, img:"https://images.unsplash.com/photo-1633321702518-7feccafb94f1?w=400"}]
 };
 
 let cart = [];
 let selectedRes = 1;
 
-// Load Restaurants
 function loadRestaurants(){
   let html = "";
   restaurantData.forEach(r=>{
-    html += `<div class="restaurant-card" onclick="openMenu(${r.id})">
-      <img src="${r.img}">
-      <h4>${r.name}</h4>
-    </div>`;
+    html += `<div class="restaurant-card" onclick="openMenu(${r.id})"><img src="${r.img}"><h4>${r.name}</h4></div>`;
   });
   document.getElementById('restaurantList').innerHTML = html;
 }
 
-// Open Menu
 function openMenu(resId){
   selectedRes = resId;
   document.getElementById('restaurantPage').style.display = 'none';
   document.getElementById('menuPage').style.display = 'block';
   document.getElementById('menuTitle').innerText = restaurantData[resId-1].name;
-  
   let html = "";
   menuData[resId].forEach(item=>{
-    html += `<div class="food-card">
-      <img src="${item.img}">
-      <div class="food-info">
-        <h4>${item.name}</h4>
-        <p class="price">₹${item.price}</p>
-        <button class="btn" onclick="addToCart(${item.id})">Add to Cart</button>
-      </div>
-    </div>`;
+    html += `<div class="food-card"><img src="${item.img}"><div class="food-info"><h4>${item.name}</h4><p class="price">₹${item.price}</p><button class="btn" onclick="addToCart(${item.id})">Add to Cart</button></div></div>`;
   });
   document.getElementById('foodList').innerHTML = html;
 }
@@ -145,7 +108,7 @@ function addToCart(id){
 
 function placeOrder(){
   if(cart.length == 0){ alert("Cart empty"); return; }
-  let total = cart.length * 100; // demo
+  let total = cart.length * 100;
   let orders = JSON.parse(localStorage.getItem('orders')) || [];
   orders.push({user:currentUser, total:total, status:"Pending"});
   localStorage.setItem('orders', JSON.stringify(orders));
@@ -160,11 +123,10 @@ function logout(){
   window.location.href = "login.html";
 }
 
+// HA 2 FUNCTION NAVIN AAHE
 function goAdmin(){
   window.location.href = "admin.html";
 }
-
-// Admin button fakt admin la disayla pahije
 function checkAdminButton(){
   let role = localStorage.getItem('currentUserRole');
   if(role === 'admin'){
@@ -172,173 +134,9 @@ function checkAdminButton(){
   }
 }
 
-// Page load
 loadRestaurants();
-checkAdminButton();
+checkAdminButton(); // HA CALL KELA
 </script>
 
-</body>
-</html>let isLogin = true;
-
-const ADMIN_EMAIL = "admin@quickbite.com";
-const ADMIN_PASS = "admin123";
-
-function toggleForm(){
-  isLogin =!isLogin;
-  if(isLogin){
-    document.getElementById('name').style.display = 'none';
-    document.getElementById('mainBtn').innerText = 'Login';
-    document.getElementById('toggleBtn').innerText = "Don't have account? Sign Up";
-  } else {
-    document.getElementById('name').style.display = 'inline-block';
-    document.getElementById('mainBtn').innerText = 'Sign Up';
-    document.getElementById('toggleBtn').innerText = "Already have account? Login";
-  }
-}
-
-function resetData(){
-  if(confirm("Nakki sagle user delete karayche ka?")){
-    localStorage.clear();
-    alert("Sagle data delete zale. Ata navin SignUp karu shakto");
-  }
-}
-
-function handleAuth(){
-  let email = document.getElementById('email').value;
-  let pass = document.getElementById('password').value;
-  let role = document.getElementById('role').value;
-
-  if(!isLogin){ // SIGNUP
-    let name = document.getElementById('name').value;
-    if(!name ||!email ||!pass){ alert("All fields required"); return; }
-    if(localStorage.getItem(email)){ alert("User already exists. Login kar kinva navin email vapar"); return; }
-    localStorage.setItem(email, JSON.stringify({name:name, pass:pass}));
-    alert("Sign Up Success! Ata Login kara");
-    toggleForm();
-  } else { // LOGIN
-    if(role == "admin" && email == ADMIN_EMAIL && pass == ADMIN_PASS){
-      alert("Welcome Admin!");
-      localStorage.setItem('currentUser', 'Admin');
-      localStorage.setItem('currentUserRole', 'admin');
-      window.location.href = "admin.html"; // Admin la ithe pathavla
-    } else {
-      let user = JSON.parse(localStorage.getItem(email));
-      if(user && user.pass == pass){
-        alert("Welcome " + user.name);
-        localStorage.setItem('currentUser', user.name);
-        localStorage.setItem('currentUserRole', 'user');
-        window.location.href = "menu.html"; // User la ithe pathavla
-      } else {
-        alert("Invalid Email or Password!");
-      }
-    }
-  }
-}
-</script>
-</body>
-</html>    <button class="btn" style="background:#f44336" onclick="resetData()">Reset All Data</button>
-    <p style="font-size:12px; color:gray">Reset dabavla ki sagle user delete hotil</p>
-  </div>
-
-  <div id="menuPage" class="page" style="display:none">
-    <div class="header">
-      <h2 id="welcomeText">Welcome</h2>
-      <button class="btn" style="width:auto; background:#f44336" onclick="logout()">Logout</button>
-    </div>
-    <div style="text-align:center">
-      <button class="btn" style="width:auto" onclick="showMenu(1)">🍕 Pizza Hut</button>
-      <button class="btn" style="width:auto" onclick="showMenu(2)">🍟 McDonalds</button>
-    </div>
-    <h2 id="resName">Menu</h2>
-    <div id="menu"></div>
-  </div>
-
-<script>
-let isLogin = true;
-let loggedInUser = "";
-
-const allMenuData = {
- 1: [{id:11, name:"Margherita Pizza", price:250, img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400"},{id:12, name:"Pepperoni Pizza", price:300, img:"https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400"}],
- 2: [{id:21, name:"Big Mac", price:180, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},{id:22, name:"French Fries", price:80, img:"https://images.unsplash.com/photo-1585109649139-366004e1f9d2?w=400"}]
-};
-const resNames = {1:"Pizza Hut", 2:"McDonalds"};
-const ADMIN_EMAIL = "admin@quickbite.com";
-const ADMIN_PASS = "admin123";
-
-function toggleForm(){
-  isLogin =!isLogin;
-  if(isLogin){
-    document.getElementById('name').style.display = 'none';
-    document.getElementById('mainBtn').innerText = 'Login';
-    document.getElementById('toggleBtn').innerText = "Don't have account? Sign Up";
-  } else {
-    document.getElementById('name').style.display = 'inline-block';
-    document.getElementById('mainBtn').innerText = 'Sign Up';
-    document.getElementById('toggleBtn').innerText = "Already have account? Login";
-  }
-}
-
-function resetData(){
-  if(confirm("Nakki sagle user delete karayche ka?")){
-    localStorage.clear();
-    alert("Sagle data delete zale. Ata navin SignUp karu shakto");
-  }
-}
-
-function handleAuth(){
-  let email = document.getElementById('email').value;
-  let pass = document.getElementById('password').value;
-  let role = document.getElementById('role').value;
-
-  if(!isLogin){ // SIGNUP
-    let name = document.getElementById('name').value;
-    if(!name ||!email ||!pass){ alert("All fields required"); return; }
-    if(localStorage.getItem(email)){ alert("User already exists. Login kar kinva navin email vapar"); return; }
-    localStorage.setItem(email, JSON.stringify({name:name, pass:pass}));
-    alert("Sign Up Success! Ata Login kara");
-    toggleForm();
-  } else { // LOGIN
-    if(role == "admin" && email == ADMIN_EMAIL && pass == ADMIN_PASS){
-      alert("Welcome Admin!");
-      loggedInUser = "Admin";
-      showMenuPage();
-    } else {
-      let user = JSON.parse(localStorage.getItem(email));
-      if(user && user.pass == pass){
-        alert("Welcome " + user.name);
-        loggedInUser = user.name;
-        showMenuPage();
-      } else {
-        alert("Invalid Email or Password!");
-      }
-    }
-  }
-}
-
-function showMenuPage(){
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('menuPage').style.display = 'block';
-  document.getElementById('welcomeText').innerText = "Welcome " + loggedInUser;
-  showMenu(1);
-}
-
-function showMenu(resId){
-  document.getElementById('resName').innerText = resNames[resId];
-  let menuDiv = document.getElementById('menu');
-  menuDiv.innerHTML = "";
-  allMenuData[resId].forEach(item=>{
-    menuDiv.innerHTML += `<div class="card">
-      <img src="${item.img}" class="food-img">
-      <h3>${item.name}</h3>
-      <p class="price">₹${item.price}</p>
-    </div>`;
-  });
-}
-
-function logout(){
-  document.getElementById('menuPage').style.display = 'none';
-  document.getElementById('loginPage').style.display = 'block';
-}
-</script>
 </body>
 </html>
