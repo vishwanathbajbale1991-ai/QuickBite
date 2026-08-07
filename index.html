@@ -14,11 +14,6 @@
    .btn{background:#ff5722; color:white; padding:14px; border:none; border-radius:8px; cursor:pointer; font-size:16px; margin:8px; width:85%; font-weight:600}
    .btn:hover{background:#e64a19}
    .link-btn{background:none; color:#2196f3; border:none; text-decoration:underline; cursor:pointer}
-   .header{display:flex; justify-content:space-between; background:white; padding:15px; border-radius:12px; margin-bottom:20px}
-    #menu{display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:20px}
-   .card{background:white; padding:15px; border-radius:12px; text-align:center}
-   .food-img{width:100%; height:180px; border-radius:10px; object-fit:cover}
-   .price{color:#ff5722; font-weight:bold; font-size:18px}
   </style>
 </head>
 <body>
@@ -35,6 +30,69 @@
     <button class="btn" id="mainBtn" onclick="handleAuth()">Login</button><br>
     <button class="link-btn" id="toggleBtn" onclick="toggleForm()">Don't have account? Sign Up</button><br><br>
     <button class="btn" style="background:#f44336" onclick="resetData()">Reset All Data</button>
+    <p style="font-size:12px; color:gray">Reset dabavla ki sagle user delete hotil</p>
+  </div>
+
+<script>
+let isLogin = true;
+
+const ADMIN_EMAIL = "admin@quickbite.com";
+const ADMIN_PASS = "admin123";
+
+function toggleForm(){
+  isLogin =!isLogin;
+  if(isLogin){
+    document.getElementById('name').style.display = 'none';
+    document.getElementById('mainBtn').innerText = 'Login';
+    document.getElementById('toggleBtn').innerText = "Don't have account? Sign Up";
+  } else {
+    document.getElementById('name').style.display = 'inline-block';
+    document.getElementById('mainBtn').innerText = 'Sign Up';
+    document.getElementById('toggleBtn').innerText = "Already have account? Login";
+  }
+}
+
+function resetData(){
+  if(confirm("Nakki sagle user delete karayche ka?")){
+    localStorage.clear();
+    alert("Sagle data delete zale. Ata navin SignUp karu shakto");
+  }
+}
+
+function handleAuth(){
+  let email = document.getElementById('email').value;
+  let pass = document.getElementById('password').value;
+  let role = document.getElementById('role').value;
+
+  if(!isLogin){ // SIGNUP
+    let name = document.getElementById('name').value;
+    if(!name ||!email ||!pass){ alert("All fields required"); return; }
+    if(localStorage.getItem(email)){ alert("User already exists. Login kar kinva navin email vapar"); return; }
+    localStorage.setItem(email, JSON.stringify({name:name, pass:pass}));
+    alert("Sign Up Success! Ata Login kara");
+    toggleForm();
+  } else { // LOGIN
+    if(role == "admin" && email == ADMIN_EMAIL && pass == ADMIN_PASS){
+      alert("Welcome Admin!");
+      localStorage.setItem('currentUser', 'Admin');
+      localStorage.setItem('currentUserRole', 'admin');
+      window.location.href = "admin.html"; // Admin la ithe pathavla
+    } else {
+      let user = JSON.parse(localStorage.getItem(email));
+      if(user && user.pass == pass){
+        alert("Welcome " + user.name);
+        localStorage.setItem('currentUser', user.name);
+        localStorage.setItem('currentUserRole', 'user');
+        window.location.href = "menu.html"; // User la ithe pathavla
+      } else {
+        alert("Invalid Email or Password!");
+      }
+    }
+  }
+}
+</script>
+</body>
+</html>    <button class="btn" style="background:#f44336" onclick="resetData()">Reset All Data</button>
     <p style="font-size:12px; color:gray">Reset dabavla ki sagle user delete hotil</p>
   </div>
 
