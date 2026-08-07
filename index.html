@@ -1,40 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>QuickBite - Food Delivery</title>
+  <title>QuickBite</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     *{margin:0; padding:0; box-sizing:border-box}
-    body{font-family: 'Segoe UI', Arial; background:#f5f5f5}
-    .page{padding:20px; max-width:1200px; margin:0 auto}
-    .header{background:#ff5722; color:white; padding:20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px}
-    .header div{display:flex; gap:10px}
-    .btn{background:#ff5722; color:white; padding:12px 20px; border:none; border-radius:8px; cursor:pointer; margin:5px; font-weight:600}
-    .btn-danger{background:#f44336}
-    .btn-admin{background:#2196f3}
-    .restaurant-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px}
-    .restaurant-card{background:white; padding:15px; border-radius:12px; text-align:center; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.1)}
-    .restaurant-card img{width:100%; height:150px; object-fit:cover; border-radius:8px}
-    .food-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px}
-    .food-card{background:white; border-radius:12px; overflow:hidden; box-shadow:0 3px 10px rgba(0,0,0,0.1)}
-    .food-card img{width:100%; height:200px; object-fit:cover}
-    .food-info{padding:15px}
-    .price{color:#ff5722; font-size:20px; font-weight:bold}
+    body{font-family: Arial; background:#f5f5f5}
+    .login-screen{background:linear-gradient(135deg,#ff5722,#ff9800); height:100vh; display:flex; justify-content:center; align-items:center}
+    .login-box{background:white; padding:40px; border-radius:20px; text-align:center}
+    .login-btn{padding:15px 30px; margin:10px; border:none; border-radius:12px; font-size:18px; cursor:pointer; width:220px; color:white; font-weight:bold}
+    .btn-user{background:#4caf50} .btn-admin{background:#2196f3}
+    .header{background:#ff5722; color:white; padding:20px; display:flex; justify-content:space-between; align-items:center}
+    .btn{padding:12px 20px; border:none; border-radius:8px; cursor:pointer; color:white; font-weight:600}
+    .btn-danger{background:#f44336} .btn-admin-header{background:#2196f3}
+    .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px; padding:20px}
+    .card{background:white; padding:15px; border-radius:12px; text-align:center; cursor:pointer}
+    .card img{width:100%; height:150px; object-fit:cover; border-radius:8px}
+    .hidden{display:none}
   </style>
 </head>
 <body>
 
-<div class="page">
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="login-screen">
+  <div class="login-box">
+    <h1>🍔 QuickBite</h1>
+    <p>Select Panel</p>
+    <button class="login-btn btn-user" onclick="doLogin('user')">👤 User Panel</button><br>
+    <button class="login-btn btn-admin" onclick="doLogin('admin')">⚙️ Admin Panel</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appPage" class="hidden">
   <div class="header">
     <h2>Welcome <span id="userName">Guest</span></h2>
     <div>
-      <button class="btn btn-admin" onclick="goAdmin()" id="adminBtn" style="display:none">⚙️ Admin Panel</button>
-      <button class="btn btn-danger" onclick="logout()">Logout</button>
+      <button class="btn btn-admin-header" id="adminBtn" style="display:none" onclick="alert('Admin Panel Open')">⚙️ Admin Panel</button>
+      <button class="btn btn-danger" onclick="doLogout()">Logout</button>
     </div>
   </div>
+  <h3 style="padding:20px">Select Restaurant</h3>
+  <div class="grid">
+    <div class="card"><img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"><h4>Pizza Hut</h4></div>
+    <div class="card"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"><h4>McDonalds</h4></div>
+    <div class="card"><img src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"><h4>Nagpur Misal</h4></div>
+    <div class="card"><img src="https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"><h4>Burger King</h4></div>
+  </div>
+</div>
 
-  <div id="restaurantPage">
+<script>
+// Page load zalyavar check kar
+window.onload = function(){
+  let role = localStorage.getItem('currentUserRole');
+  if(role){
+    showApp(role);
+  } else {
+    document.getElementById('loginPage').style.display = 'flex';
+  }
+}
+
+function doLogin(role){
+  localStorage.setItem('currentUser', role === 'admin' ? 'Admin' : 'Guest User');
+  localStorage.setItem('currentUserRole', role);
+  showApp(role);
+}
+
+function showApp(role){
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('appPage').style.display = 'block';
+  document.getElementById('userName').innerText = localStorage.getItem('currentUser');
+  if(role === 'admin'){
+    document.getElementById('adminBtn').style.display = 'inline-block';
+  }
+}
+
+function doLogout(){
+  localStorage.removeItem('currentUser');
+  localStorage.removeItem('currentUserRole');
+  location.reload();
+}
+</script>
+
+</body>
+</html>  <div id="restaurantPage">
     <h3>Select Restaurant</h3>
     <div class="restaurant-grid" id="restaurantList"></div>
   </div>
