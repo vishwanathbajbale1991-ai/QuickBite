@@ -43,6 +43,16 @@ body{font-family: Arial; background:#f5f5f5}
 </div>
 
 <script>
+  window.onload = function(){
+  let role = localStorage.getItem('currentUserRole');
+  if(!role){ 
+    window.location.href = "login.html"; // login nasel tar login var pathav
+  }
+  // tujha urvarit code ithech aahe
+  document.getElementById('userName').innerText = currentUser;
+  loadRestaurants();
+  checkAdminButton();
+  }
 let currentUser = localStorage.getItem('currentUser') || 'Guest';
 document.getElementById('userName').innerText = currentUser;
 
