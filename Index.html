@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>QuickBite</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+.login{background:linear-gradient(135deg,#ff5722,#ff9800);height:100vh;display:flex;justify-content:center;align-items:center}
+.box{background:white;padding:40px;border-radius:20px;text-align:center;width:90%;max-width:400px}
+.box h1{color:#ff5722}
+.btn{width:100%;padding:15px;margin:10px 0;border:none;border-radius:12px;font-size:18px;cursor:pointer;font-weight:bold;color:white}
+.btn-user{background:#4caf50} .btn-admin{background:#2196f3} .btn-danger{background:#f44336}
+.header{background:#ff5722;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:15px}
+.card{background:white;border-radius:10px;text-align:center;padding:10px}
+.card img{width:100%;height:120px;object-fit:cover;border-radius:8px}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<div id="login" class="login">
+  <div class="box">
+    <h1>🍔 QuickBite</h1>
+    <p>Select Panel</p>
+    <button class="btn btn-user" onclick="login('user')">👤 User Panel</button>
+    <button class="btn btn-admin" onclick="login('admin')">⚙️ Admin Panel</button>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <div class="header">
+    <h3>Welcome <span id="name"></span></h3>
+    <div>
+      <button class="btn btn-admin" id="adminBtn" style="display:none">⚙️ Admin</button>
+      <button class="btn btn-danger" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <h3 style="padding:15px">Select Restaurant</h3>
+  <div class="grid">
+    <div class="card"><img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"><h4>Pizza Hut</h4></div>
+    <div class="card"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"><h4>McDonalds</h4></div>
+    <div class="card"><img src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"><h4>Nagpur Misal</h4></div>
+    <div class="card"><img src="https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"><h4>Burger King</h4></div>
+  </div>
+</div>
+
+<script>
+if(localStorage.getItem('role')){
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('name').innerText=localStorage.getItem('name');
+  if(localStorage.getItem('role')=='admin'){document.getElementById('adminBtn').style.display='inline-block';}
+}else{
+  document.getElementById('login').classList.remove('hidden');
+  document.getElementById('app').classList.add('hidden');
+}
+function login(r){
+  localStorage.setItem('role',r); 
+  localStorage.setItem('name',r=='admin'?'Admin':'Guest User');
+  location.reload();
+}
+function logout(){localStorage.clear(); location.reload();}
+</script>
+</body>
+</html>
