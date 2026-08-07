@@ -59,7 +59,6 @@
   </div>
 
 </div>
-
 <script>
 // Login check - Admin nasel tar login page var pathav
 if(localStorage.getItem('currentUserRole')!== 'admin'){
@@ -105,8 +104,8 @@ function addFood(){
   if(!name ||!price){ alert("Name and Price required"); return; }
 
   let newId = Date.now();
-  allMenu[resId].push({id:newId, name:name, price:parseInt(price), img:img});
-  localStorage.setItem('menuData', JSON.stringify(allMenu));
+  menuData[resId].push({id:newId, name:name, price:parseInt(price), img:img});
+  localStorage.setItem('menuData', JSON.stringify(menuData));
 
   alert(name + " added successfully!");
   document.getElementById('foodName').value = "";
@@ -116,9 +115,10 @@ function addFood(){
 
 function loadMenu(){
   let html = "";
-  for(let res in allMenu){
-    html += `<h4>Restaurant ${res}</h4><table><tr><th>Name</th><th>Price</th></tr>`;
-    allMenu[res].forEach(item=>{
+  let resNames = ["Pizza Hut", "McDonalds", "Nagpur Misal", "Burger King"];
+  for(let res in menuData){
+    html += `<h4>${resNames[res-1]}</h4><table><tr><th>Name</th><th>Price</th></tr>`;
+    menuData[res].forEach(item=>{
       html += `<tr><td>${item.name}</td><td>₹${item.price}</td></tr>`;
     });
     html += `</table><br>`;
@@ -151,5 +151,7 @@ function logout(){
 loadMenu();
 loadOrders();
 </script>
+</body>
+</html>
 </body>
   </html>
