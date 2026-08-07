@@ -11,11 +11,8 @@
     .header{background:#ff5722; color:white; padding:20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px}
     .header div{display:flex; gap:10px}
     .btn{background:#ff5722; color:white; padding:12px 20px; border:none; border-radius:8px; cursor:pointer; margin:5px; font-weight:600}
-    .btn:hover{background:#e64a19}
     .btn-danger{background:#f44336}
     .btn-admin{background:#2196f3}
-    .btn-admin:hover{background:#1976d2}
-    .btn-success{background:#4caf50}
     .restaurant-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:20px}
     .restaurant-card{background:white; padding:15px; border-radius:12px; text-align:center; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.1)}
     .restaurant-card img{width:100%; height:150px; object-fit:cover; border-radius:8px}
@@ -29,12 +26,107 @@
 <body>
 
 <div class="page">
-  <!-- HEADER - ITH BADAL AAHE -->
   <div class="header">
     <h2>Welcome <span id="userName">Guest</span></h2>
     <div>
       <button class="btn btn-admin" onclick="goAdmin()" id="adminBtn" style="display:none">⚙️ Admin Panel</button>
       <button class="btn btn-danger" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div id="restaurantPage">
+    <h3>Select Restaurant</h3>
+    <div class="restaurant-grid" id="restaurantList"></div>
+  </div>
+
+  <div id="menuPage" style="display:none">
+    <button class="btn" onclick="backToRestaurants()">← Back</button>
+    <h3 id="menuTitle"></h3>
+    <div class="food-grid" id="foodList"></div>
+    <button class="btn" style="position:fixed; bottom:20px; right:20px; background:#4caf50" onclick="placeOrder()">Order Now 🛒 <span id="cartCount">0</span></button>
+  </div>
+</div>
+
+<script>
+let currentUser = localStorage.getItem('currentUser') || 'Guest';
+document.getElementById('userName').innerText = currentUser;
+
+let restaurantData = [
+ {id:1, name:"Pizza Hut", img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"},
+ {id:2, name:"McDonalds", img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"},
+ {id:3, name:"Nagpur Misal", img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"},
+ {id:4, name:"Burger King", img:"https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400"}
+];
+
+let menuData = JSON.parse(localStorage.getItem('menuData')) || {
+ 1: [{id:11, name:"Margherita Pizza", price:250, img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400"}],
+ 2: [{id:21, name:"Big Mac", price:180, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"}],
+ 3: [{id:31, name:"Misal Pav", price:100, img:"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400"}],
+ 4: [{id:41, name:"Whopper", price:190, img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"}]
+};
+
+let cart = [];
+let selectedRes = 1;
+
+function loadRestaurants(){
+  let html = "";
+  restaurantData.forEach(r=>{
+    html += `<div class="restaurant-card" onclick="openMenu(${r.id})"><img src="${r.img}"><h4>${r.name}</h4></div>`;
+  });
+  document.getElementById('restaurantList').innerHTML = html;
+}
+
+function openMenu(resId){
+  selectedRes = resId;
+  document.getElementById('restaurantPage').style.display = 'none';
+  document.getElementById('menuPage').style.display = 'block';
+  document.getElementById('menuTitle').innerText = restaurantData[resId-1].name;
+  let html = "";
+  menuData[resId].forEach(item=>{
+    html += `<div class="food-card"><img src="${item.img}"><div class="food-info"><h4>${item.name}</h4><p class="price">₹${item.price}</p><button class="btn" onclick="addToCart(${item.id})">Add to Cart</button></div></div>`;
+  });
+  document.getElementById('foodList').innerHTML = html;
+}
+
+function backToRestaurants(){
+  document.getElementById('restaurantPage').style.display = 'block';
+  document.getElementById('menuPage').style.display = 'none';
+}
+
+function addToCart(id){
+  cart.push(id);
+  document.getElementById('cartCount').innerText = cart.length;
+}
+
+function placeOrder(){
+  if(cart.length == 0){ alert("Cart empty"); return; }
+  alert("Order Placed!");
+  cart = [];
+  document.getElementById('cartCount').innerText = 0;
+}
+
+function logout(){
+  localStorage.removeItem('currentUser');
+  localStorage.removeItem('currentUserRole');
+  window.location.href = "login.html";
+}
+
+function goAdmin(){
+  window.location.href = "admin.html";
+}
+function checkAdminButton(){
+  let role = localStorage.getItem('currentUserRole');
+  if(role === 'admin'){
+    document.getElementById('adminBtn').style.display = 'inline-block';
+  }
+}
+
+loadRestaurants();
+checkAdminButton();
+</script>
+
+</body>
+</html>      <button class="btn btn-danger" onclick="logout()">Logout</button>
     </div>
   </div>
 
